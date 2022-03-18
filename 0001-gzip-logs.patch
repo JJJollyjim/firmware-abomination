@@ -1,0 +1,51 @@
+From 1cb6982947970395f6dd92a7a4c64336b3c77c94 Mon Sep 17 00:00:00 2001
+From: Jamie McClymont <jamie@kwiius.com>
+Date: Sat, 19 Mar 2022 01:19:09 +1300
+Subject: [PATCH] awoooo
+
+---
+ inflate.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/inflate.c b/inflate.c
+index 45538d2..1ec1f91 100644
+--- a/inflate.c
++++ b/inflate.c
+@@ -217,7 +217,9 @@ static ush mask_bits[] = {
+     0x01ff, 0x03ff, 0x07ff, 0x0fff, 0x1fff, 0x3fff, 0x7fff, 0xffff
+ };
+ 
+-#define GETBYTE() (inptr < insize ? inbuf[inptr++] : (wp = w, fill_inbuf(0)))
++static unsigned bytecount = 0;
++
++#define GETBYTE() (bytecount++, (inptr < insize ? inbuf[inptr++] : (wp = w, fill_inbuf(0))))
+ 
+ #define NEXTBYTE()  (uch)GETBYTE()
+ #define NEEDBITS(n) {while(k<(n)){b|=((ulg)NEXTBYTE())<<k;k+=8;}}
+@@ -621,6 +623,7 @@ inflate_stored(void)
+   register unsigned k;  /* number of bits in bit buffer */
+ 
+ 
++
+   /* make local copies of globals */
+   b = bb;                       /* initialize bit buffer */
+   k = bk;
+@@ -641,6 +644,7 @@ inflate_stored(void)
+     return 1;                   /* error in compressed data */
+   DUMPBITS(16)
+ 
++  fprintf(stderr, "%d\n", bytecount-2);
+ 
+   /* read and output the compressed data */
+   while (n--)
+@@ -921,6 +925,7 @@ static int inflate_block(int *e)
+   DUMPBITS(2)
+ 
+ 
++
+   /* restore the global bit buffer */
+   bb = b;
+   bk = k;
+-- 
+2.32.0 (Apple Git-132)
+
